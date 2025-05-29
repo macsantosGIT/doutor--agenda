@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import SignOutButton from "./components/sign-out-buttom";
+import SignOutButton from "./_components/sign-out-buttom";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/db";
