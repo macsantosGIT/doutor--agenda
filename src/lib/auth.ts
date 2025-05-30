@@ -20,14 +20,16 @@ export const auth = betterAuth({
         },
       });
       // TODO: Handle multiple clinics - Mudar quando usuario tiver mais de uma clinica
-      const clinic = clinics[0];
+      const clinic = clinics?.[0];
       return {
         user: {
           ...user,
-          clinic: {
-            id: clinic.clinicId,
-            name: clinic.clinic?.name,
-          },
+          clinic: clinic?.clinicId
+            ? {
+                id: clinic?.clinicId,
+                name: clinic?.clinic?.name,
+              }
+            : undefined,
         },
         session,
       };
