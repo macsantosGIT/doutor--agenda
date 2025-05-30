@@ -29,8 +29,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { medicalSpecialties } from "../_constants";
+import { useAction } from "next-safe-action/hooks";
 
 import { NumericFormat } from "react-number-format";
+import { upsertDoctor } from "@/actions/doctor";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -62,7 +65,11 @@ const formSchema = z
     },
   );
 
-const UpsertDoctorForm = () => {
+interface UpsertDoctorFormProps {
+  onSuccess?: () => void;
+}
+
+const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,8 +83,23 @@ const UpsertDoctorForm = () => {
     },
   });
 
+  const upsertDoctorAction = useAction(upsertDoctor, {
+    onSuccess: () => {
+      toast.success("Médico atualizado com sucesso");
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar médico");
+    },
+  });
+
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+    upsertDoctorAction.execute({
+      ...data,
+      availableFromWeekday: parseInt(data.availableFromWeekday),
+      availableToWeekday: parseInt(data.availableToWeekday),
+      appointmentPriceInCents: data.appointmentPrice * 100,
+    });
   };
 
   return (
@@ -348,7 +370,9 @@ const UpsertDoctorForm = () => {
           />
 
           <DialogFooter>
-            <Button type="submit">Adicionar</Button>
+            <Button type="submit" disabled={upsertDoctorAction.isPending}>
+              {upsertDoctorAction.isPending ? "Adicionando..." : "Adicionar"}
+            </Button>
           </DialogFooter>
         </form>
       </Form>
