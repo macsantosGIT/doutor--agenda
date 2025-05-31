@@ -34,6 +34,7 @@ import { useAction } from "next-safe-action/hooks";
 import { NumericFormat } from "react-number-format";
 import { upsertDoctor } from "@/actions/doctor";
 import { toast } from "sonner";
+import { doctorsTable } from "@/db/schema";
 
 const formSchema = z
   .object({
@@ -66,20 +67,23 @@ const formSchema = z
   );
 
 interface UpsertDoctorFormProps {
+  doctor?: typeof doctorsTable.$inferSelect;
   onSuccess?: () => void;
 }
 
-const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
+const UpsertDoctorForm = ({ doctor, onSuccess }: UpsertDoctorFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      specialty: "",
-      appointmentPrice: 0,
-      availableFromWeekday: "1",
-      availableToWeekday: "5",
-      availableFromTime: "",
-      availableToTime: "",
+      name: doctor?.name || "",
+      specialty: doctor?.speciality || "",
+      appointmentPrice: doctor?.appointmentPriceInCents
+        ? doctor.appointmentPriceInCents / 100
+        : 0,
+      availableFromWeekday: doctor?.availableFromWeekDay.toString() || "1",
+      availableToWeekday: doctor?.availableToWeekDay.toString() || "5",
+      availableFromTime: doctor?.availableFromTime.toString() || "",
+      availableToTime: doctor?.availableToTime.toString() || "",
     },
   });
 
@@ -96,6 +100,7 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     upsertDoctorAction.execute({
       ...data,
+      id: doctor?.id,
       availableFromWeekday: parseInt(data.availableFromWeekday),
       availableToWeekday: parseInt(data.availableToWeekday),
       appointmentPriceInCents: data.appointmentPrice * 100,
@@ -105,8 +110,12 @@ const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps) => {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Adicionar médico</DialogTitle>
-        <DialogDescription>Adicione um novo médico</DialogDescription>
+        <DialogTitle>{doctor ? doctor.name : "Adicionar médico"}</DialogTitle>
+        <DialogDescription>
+          {doctor
+            ? "Edite as informações do médico"
+            : "Adicione um novo médico"}
+        </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
