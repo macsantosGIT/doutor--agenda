@@ -23,6 +23,21 @@ import UpsertDoctorForm from "./upsert-doctor-form";
 import { getAvailability } from "../_helpers/availability";
 import { formatCurrencyInCents } from "@/helpers/currency";
 import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { TrashIcon } from "lucide-react";
+import { deleteDoctor } from "@/actions/delete-doctor";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
 
 interface DoctorCardProps {
   doctor: typeof doctorsTable.$inferSelect;
@@ -38,6 +53,22 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
     .join("");
 
   const availability = getAvailability(doctor);
+
+  const deleteDoctorAction = useAction(deleteDoctor, {
+    onSuccess: () => {
+      toast.success("Médico deletado com sucesso");
+    },
+    onError: () => {
+      toast.error("Erro ao deletar médico");
+    },
+  });
+
+  const handleDeleteDoctor = () => {
+    if (!doctor?.id) {
+      return;
+    }
+    deleteDoctorAction.execute({ id: doctor.id });
+  };
 
   return (
     <Card>
@@ -89,6 +120,31 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
             onSuccess={() => setIsUpsertDoctorDialogOpen(false)}
           />
         </Dialog>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="w-full">
+              <TrashIcon />
+              Deletar médico
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Tem certeza que deseja deletar o médico?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Essa ação não pode ser desfeita. Isso irá deletar o médico e
+                remover todos os dados dele.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteDoctor}>
+                Deletar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardFooter>
     </Card>
   );
