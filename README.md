@@ -34,3 +34,39 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Roteiro Aula 01: Setup do Projeto
+
+- [x] Inicialização do projeto Next.js
+- [x] Configuração de ferramentas (ESlint, Prettier, Tailwind)
+- [x] Configuração do Drizzle e banco de dados
+- [x] Configuração do shadcn/ui
+
+## Roteiro Aula 02: Autenticação e Configurações do Estabelecimento
+
+- [x] Tela de login e criação de conta
+- [x] Login com e-mail e senha
+- [x] Login com o Google
+- [x] Fundamentos do Next.js (Rotas, Páginas, Layouts)
+- [x] Criação de clínica
+
+## Roteiro Aula 03: Gerenciamento de Profissionais e Disponibilidade
+
+- [x] Sidebar e Route Groups
+- [x] Página de médicos
+- [x] Criação de médicos & NextSafeAction
+- [x] Listagem de médicos
+- [x] Atualização de médicos
+- [x] Deleção de médicos
+
+## Roteiro Aula 04: Gerenciamento de Pacientes e Agendamentos
+
+- [] Criação de pacientes
+- [] Edição de pacientes
+- [] Listagem de pacientes
+- [] Deleção de pacientes
+- [] Criação de agendamentos
+- [] Listagem de agendamentos
+- [] Deleção de agendamentos
+
+---

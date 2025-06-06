@@ -36,6 +36,7 @@ import { upsertDoctor } from "@/actions/upsert-doctor";
 import { toast } from "sonner";
 import { doctorsTable } from "@/db/schema";
 import { deleteDoctor } from "@/actions/delete-doctor";
+import { useEffect } from "react";
 
 const formSchema = z
   .object({
@@ -68,11 +69,16 @@ const formSchema = z
   );
 
 interface UpsertDoctorFormProps {
+  isOpen: boolean;
   doctor?: typeof doctorsTable.$inferSelect;
   onSuccess?: () => void;
 }
 
-const UpsertDoctorForm = ({ doctor, onSuccess }: UpsertDoctorFormProps) => {
+const UpsertDoctorForm = ({
+  doctor,
+  onSuccess,
+  isOpen,
+}: UpsertDoctorFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     shouldUnregister: true,
     resolver: zodResolver(formSchema),
@@ -88,6 +94,12 @@ const UpsertDoctorForm = ({ doctor, onSuccess }: UpsertDoctorFormProps) => {
       availableToTime: doctor?.availableToTime.toString() || "",
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      form.reset(doctor);
+    }
+  }, [isOpen, form, doctor]);
 
   const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
